@@ -4,12 +4,18 @@ use axum::Router;
 
 use axum::debug_handler;
 
+use crate::database::Database;
 use crate::database::Video;
 mod database;
+mod schema;
+
+type DatabaseState = std::sync::Arc<std::sync::RwLock<database::Sqlite3>>;
 
 #[tokio::main]
 async fn main() {
-    let shared_state = std::sync::Arc::new(std::sync::RwLock::new(database::Database::new()));
+    let shared_state = std::sync::Arc::new(std::sync::RwLock::new(database::Sqlite3::new(
+        "db/test.sqlite3",
+    )));
 
     // build our application with a route
     let app = Router::new()
@@ -31,13 +37,11 @@ struct RootTemplate {
     queue_size: usize,
 }
 
-async fn root(
-    db: axum::extract::State<std::sync::Arc<std::sync::RwLock<database::Database>>>,
-) -> RootTemplate {
+async fn root(db: axum::extract::State<DatabaseState>) -> RootTemplate {
     let db = db.read().unwrap();
     RootTemplate {
         videos: db.search("hello"),
-        queue_size: db.queue.len(),
+        queue_size: db.queue_size(),
     }
 }
 
@@ -47,9 +51,7 @@ struct ResultsTemplate {
     videos: Vec<Video>,
 }
 
-async fn results(
-    db: axum::extract::State<std::sync::Arc<std::sync::RwLock<database::Database>>>,
-) -> ResultsTemplate {
+async fn results(db: axum::extract::State<DatabaseState>) -> ResultsTemplate {
     let db = db.read().unwrap();
     ResultsTemplate {
         videos: db.search("hello"),
@@ -63,7 +65,7 @@ struct Enqueue {
 
 #[debug_handler]
 async fn enqueue(
-    db: axum::extract::State<std::sync::Arc<std::sync::RwLock<database::Database>>>,
+    db: axum::extract::State<DatabaseState>,
     axum::Form(enqueue): axum::Form<Enqueue>,
 ) -> axum::response::Redirect {
     let mut db = db.write().unwrap();
