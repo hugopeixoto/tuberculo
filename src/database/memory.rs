@@ -60,4 +60,6 @@ impl crate::database::Database for Memory {
     fn pop_queue(&mut self) -> Result<crate::database::Job, anyhow::Error> {
         Err(anyhow::format_err!("Not implemented, sorry!"))
     }
+    fn done(&mut self, _id: i32) {}
+    fn fail(&mut self, _id: i32) {}
 }

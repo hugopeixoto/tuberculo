@@ -7,6 +7,7 @@ pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("migrations");
 #[diesel(table_name = crate::schema::queue)]
 #[diesel(check_for_backend(diesel::sqlite::Sqlite))]
 struct QueueItem {
+    pub id: i32,
     pub job: String,
     pub args: String,
     // pub created_at: chrono::NaiveDateTime,
@@ -89,8 +90,33 @@ impl crate::database::Database for Sqlite3 {
             .map_err(|_x| anyhow::format_err!("nothing in the queue"))?;
 
         match queue_item.job.as_str() {
-            "download" => Ok(crate::database::Job::Download(queue_item.args.clone())),
+            "download" => Ok(crate::database::Job::Download(
+                queue_item.id,
+                queue_item.args.clone(),
+            )),
             x => Err(anyhow::format_err!("Unsupported job type: {}", x)),
         }
+    }
+
+    fn done(&mut self, id: i32) {
+        let mut connection = self.connection.get().unwrap();
+
+        use crate::schema::queue::dsl;
+
+        diesel::delete(dsl::queue)
+            .filter(dsl::id.eq(id))
+            .execute(&mut connection)
+            .unwrap();
+    }
+    fn fail(&mut self, id: i32) {
+        let mut connection = self.connection.get().unwrap();
+
+        use crate::schema::queue::dsl;
+
+        diesel::update(dsl::queue)
+            .filter(dsl::id.eq(id))
+            .set(dsl::locked_at.eq(None::<chrono::NaiveDateTime>))
+            .execute(&mut connection)
+            .unwrap();
     }
 }

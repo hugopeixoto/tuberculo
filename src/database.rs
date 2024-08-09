@@ -13,7 +13,7 @@ pub struct Video {
 
 #[derive(Clone, Debug)]
 pub enum Job {
-    Download(String),
+    Download(i32, String),
 }
 
 pub trait Database {
@@ -21,4 +21,6 @@ pub trait Database {
     fn enqueue(&mut self, url: String);
     fn queue_size(&self) -> usize;
     fn pop_queue(&mut self) -> Result<Job, anyhow::Error>;
+    fn done(&mut self, id: i32);
+    fn fail(&mut self, id: i32);
 }
