@@ -1,0 +1,37 @@
+<html>
+    <head>
+        <script
+            src="https://unpkg.com/htmx.org@2.0.1"
+            integrity="sha384-QWGpdj554B4ETpJJC9z+ZHJcA/i59TyjxEPXiiUgN2WmTyV5OEZWCD6gQhgkdpB/"
+            crossorigin="anonymous"
+        ></script>
+    </head>
+    <body>
+        <h1>Hello!</h1>
+
+        <p>tudo fixe? temos {{ queue_size }} videos na fila</p>
+
+        <form hx-get="/results" hx-target="#results" hx-swap="innerHTML">
+            <label>
+                Search:
+                <input type="search" placeholder="video title or description" />
+            </label>
+        </form>
+
+        <div id="results">{% include "results.html" %}</div>
+
+        <h2>Enqueue video</h2>
+        <form action="/enqueue" method="post">
+            <label>
+                Video URL:
+                <input
+                    name="url"
+                    type="text"
+                    placeholder="https://youtube.com/poop"
+                />
+            </label>
+
+            <input type="submit" value="Enqueue" />
+        </form>
+    </body>
+</html>
