@@ -6,5 +6,6 @@ diesel::table! {
         job -> Text,
         args -> Text,
         created_at -> Timestamp,
+        locked_at -> Nullable<Timestamp>,
     }
 }

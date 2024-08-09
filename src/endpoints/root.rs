@@ -6,12 +6,14 @@ use crate::DatabaseState;
 pub struct Template {
     videos: Vec<crate::database::Video>,
     queue_size: usize,
+    job: Option<crate::database::Job>,
 }
 
 pub async fn handler(db: axum::extract::State<DatabaseState>) -> Template {
-    let db = db.read().unwrap();
+    let mut db = db.write().unwrap();
     Template {
         videos: db.search("hello"),
         queue_size: db.queue_size(),
+        job: db.pop_queue().ok(),
     }
 }

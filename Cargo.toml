@@ -6,10 +6,12 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+anyhow = "1.0.86"
 askama = { version = "0.12.1", features = ["serde_json", "with-axum"] }
 askama_axum = "0.4.0"
 axum = { version = "0.7.5", features = ["macros"] }
-diesel = { version = "2.2.2", features = ["sqlite", "returning_clauses_for_sqlite_3_35", "r2d2"] }
+chrono = "0.4.38"
+diesel = { version = "2.2.2", features = ["sqlite", "returning_clauses_for_sqlite_3_35", "r2d2", "chrono"] }
 diesel_migrations = { version = "2.2.0", features = ["sqlite"] }
 rand = "0.8.5"
 serde = { version = "1.0.205", features = ["derive"] }

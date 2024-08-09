@@ -1,7 +1,7 @@
 use axum::routing::{get, post};
 use axum::Router;
 
-mod database;
+pub mod database;
 mod endpoints;
 mod schema;
 

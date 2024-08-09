@@ -3,6 +3,15 @@ use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 
 pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("migrations");
 
+#[derive(diesel::Queryable, diesel::Selectable)]
+#[diesel(table_name = crate::schema::queue)]
+#[diesel(check_for_backend(diesel::sqlite::Sqlite))]
+struct QueueItem {
+    pub job: String,
+    pub args: String,
+    // pub created_at: chrono::NaiveDateTime,
+}
+
 pub struct Sqlite3 {
     connection:
         diesel::r2d2::Pool<diesel::r2d2::ConnectionManager<diesel::sqlite::SqliteConnection>>,
@@ -57,5 +66,31 @@ impl crate::database::Database for Sqlite3 {
             .unwrap();
 
         x as usize
+    }
+
+    fn pop_queue(&mut self) -> Result<crate::database::Job, anyhow::Error> {
+        let mut connection = self.connection.get().unwrap();
+
+        use crate::schema::queue::dsl::*;
+
+        let queue_item = diesel::update(queue)
+            .set(locked_at.eq(diesel::dsl::now))
+            .filter(
+                id.eq_any(
+                    queue
+                        .select(id)
+                        .filter(locked_at.is_null())
+                        .limit(1)
+                        .into_boxed(),
+                ),
+            )
+            .returning(QueueItem::as_select())
+            .get_result(&mut connection)
+            .map_err(|_x| anyhow::format_err!("nothing in the queue"))?;
+
+        match queue_item.job.as_str() {
+            "download" => Ok(crate::database::Job::Download(queue_item.args.clone())),
+            x => Err(anyhow::format_err!("Unsupported job type: {}", x)),
+        }
     }
 }

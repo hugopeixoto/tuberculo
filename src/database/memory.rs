@@ -56,4 +56,8 @@ impl crate::database::Database for Memory {
         .download()
         .unwrap();*/
     }
+
+    fn pop_queue(&mut self) -> Result<crate::database::Job, anyhow::Error> {
+        Err(anyhow::format_err!("Not implemented, sorry!"))
+    }
 }

@@ -10,6 +10,12 @@
         <h1>Hello!</h1>
 
         <p>tudo fixe? temos {{ queue_size }} videos na fila</p>
+        {% match job %} {% when Some with (crate::database::Job::Download with
+        (val)) %}
+        <p>o próximo é: {{ val }}</p>
+        {% when None %}
+        <p>não há vídeos na fila</p>
+        {% endmatch %}
 
         <form hx-get="/results" hx-target="#results" hx-swap="innerHTML">
             <label>

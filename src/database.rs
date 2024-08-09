@@ -11,8 +11,14 @@ pub struct Video {
     pub description: String,
 }
 
+#[derive(Clone, Debug)]
+pub enum Job {
+    Download(String),
+}
+
 pub trait Database {
     fn search(&self, term: &str) -> Vec<Video>;
     fn enqueue(&mut self, url: String);
     fn queue_size(&self) -> usize;
+    fn pop_queue(&mut self) -> Result<Job, anyhow::Error>;
 }
