@@ -1,6 +1,8 @@
 use diesel::prelude::*;
 use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 
+use crate::database::Video;
+
 pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("migrations");
 
 #[derive(diesel::Queryable, diesel::Selectable)]
@@ -40,7 +42,15 @@ impl Sqlite3 {
 
 impl crate::database::Database for Sqlite3 {
     fn search(&self, _term: &str) -> Vec<crate::database::Video> {
-        vec![]
+        let mut connection = self.connection.get().unwrap();
+
+        use crate::schema::videos::dsl;
+
+        dsl::videos
+            .limit(100)
+            .select(Video::as_select())
+            .get_results(&mut connection)
+            .unwrap()
     }
 
     fn enqueue(&mut self, url: String) {
@@ -118,5 +128,16 @@ impl crate::database::Database for Sqlite3 {
             .set(dsl::locked_at.eq(None::<chrono::NaiveDateTime>))
             .execute(&mut connection)
             .unwrap();
+    }
+
+    fn store_metadata(&mut self, metadata: &crate::database::Video) -> Result<(), anyhow::Error> {
+        let mut connection = self.connection.get().unwrap();
+
+        use crate::schema::videos::dsl;
+
+        diesel::insert_or_ignore_into(dsl::videos)
+            .values(metadata)
+            .execute(&mut connection)?;
+        Ok(())
     }
 }

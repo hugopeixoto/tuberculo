@@ -18,7 +18,7 @@ async fn main() {
 
     let db = shared_state.clone();
     std::thread::spawn(move || loop {
-        downloader::download(&db);
+        downloader::download(&db).unwrap();
         std::thread::sleep(std::time::Duration::from_millis(10_000));
     });
 
@@ -27,6 +27,10 @@ async fn main() {
         .route("/", get(endpoints::root::handler))
         .route("/results", get(endpoints::results::handler))
         .route("/enqueue", post(endpoints::enqueue::handler))
+        .nest_service(
+            "/assets/videos",
+            tower_http::services::ServeDir::new("videos"),
+        )
         .with_state(shared_state);
 
     let listener = tokio::net::TcpListener::bind(bind_address).await.unwrap();

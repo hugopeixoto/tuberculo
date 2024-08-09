@@ -1,5 +1,8 @@
 <ul>
     {% for video in videos %}
-    <li>{{ video.title }}</li>
+    <li>
+        <img src="/assets/videos/{{ video.id }}.webp" />
+        {{ video.title }}
+    </li>
     {% endfor %}
 </ul>
