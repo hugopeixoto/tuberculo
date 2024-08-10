@@ -8,6 +8,12 @@
             />
             {{ video.title }}
             <span class="youtube_id">{{ video.id }}</span>
+            <ul class="categories">
+                {% for category in video.categories.as_ref().unwrap().split(",")
+                %}
+                <li class="category">{{ category }}</li>
+                {% endfor %}
+            </ul>
         </a>
     </li>
     {% endfor %}

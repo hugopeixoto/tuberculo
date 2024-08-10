@@ -14,7 +14,7 @@
             input[type="text"] {
                 width: 40ch;
             }
-            #results ul {
+            #results > ul {
                 list-style-type: none;
                 margin: 0;
                 padding: 1rem;
@@ -22,15 +22,15 @@
                 flex-wrap: wrap;
                 gap: 2rem;
             }
-            #results ul li {
+            #results > ul > li {
                 align-content: stretch;
                 display: flex;
                 box-shadow: 2px 2px 5px orange;
             }
-            #results ul li:hover {
+            #results > ul > li:hover {
                 box-shadow: 2px 2px 5px white;
             }
-            #results ul li a {
+            #results > ul > li > a {
                 display: grid;
                 align-content: start;
                 gap: 0.5rem;
@@ -38,12 +38,19 @@
                 background-color: white;
                 padding: 1rem;
             }
-            #results ul li .youtube_id {
+            #results > ul > li .youtube_id {
                 font-family: monospace;
                 font-size: 0.8em;
             }
-            #results ul li img {
+            #results > ul > li img {
                 width: 100%;
+            }
+            #results .categories {
+                padding: 0;
+                font-size: 0.8em;
+                list-style-type: none;
+                display: flex;
+                gap: 0.5rem;
             }
 
             .watch {
