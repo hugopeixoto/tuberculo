@@ -58,15 +58,16 @@ impl crate::database::Database for Sqlite3 {
     }
 
     fn enqueue(&mut self, url: String) {
-        use crate::schema::queue::dsl::*;
+        use crate::schema::queue::dsl;
 
         let mut connection = self.connection.get().unwrap();
 
-        diesel::insert_into(queue)
+        diesel::insert_into(dsl::queue)
             .values((
-                job.eq("download"),
-                args.eq(url),
-                created_at.eq(diesel::dsl::now),
+                dsl::job.eq("download"),
+                dsl::args.eq(url),
+                dsl::created_at.eq(diesel::dsl::now),
+                dsl::attempts.eq(0),
             ))
             .execute(&mut connection)
             .unwrap();
@@ -89,22 +90,22 @@ impl crate::database::Database for Sqlite3 {
     fn pop_queue(&mut self) -> Result<crate::database::Job, anyhow::Error> {
         let mut connection = self.connection.get().unwrap();
 
-        use crate::schema::queue::dsl::*;
+        use crate::schema::queue::dsl;
 
-        let queue_item = diesel::update(queue)
-            .set(locked_at.eq(diesel::dsl::now))
+        let queue_item = diesel::update(dsl::queue)
+            .set(dsl::locked_at.eq(diesel::dsl::now))
             .filter(
-                id.eq_any(
-                    queue
-                        .select(id)
-                        .filter(locked_at.is_null())
+                dsl::id.eq_any(
+                    dsl::queue
+                        .select(dsl::id)
+                        .filter(dsl::locked_at.is_null().and(dsl::attempts.lt(3)))
                         .limit(1)
                         .into_boxed(),
                 ),
             )
             .returning(QueueItem::as_select())
             .get_result(&mut connection)
-            .map_err(|_x| anyhow::format_err!("nothing in the queue"))?;
+            .map_err(|e| anyhow::format_err!("{}", e))?;
 
         match queue_item.job.as_str() {
             "download" => Ok(crate::database::Job::Download(
@@ -125,14 +126,18 @@ impl crate::database::Database for Sqlite3 {
             .execute(&mut connection)
             .unwrap();
     }
-    fn fail(&mut self, id: i32) {
+    fn fail(&mut self, id: i32, err: &anyhow::Error) {
         let mut connection = self.connection.get().unwrap();
 
         use crate::schema::queue::dsl;
 
         diesel::update(dsl::queue)
             .filter(dsl::id.eq(id))
-            .set(dsl::locked_at.eq(None::<chrono::NaiveDateTime>))
+            .set((
+                dsl::locked_at.eq(None::<chrono::NaiveDateTime>),
+                dsl::attempts.eq(dsl::attempts + 1),
+                dsl::errors.eq(dsl::errors.concat("\n").concat(err.to_string())),
+            ))
             .execute(&mut connection)
             .unwrap();
     }
@@ -165,6 +170,7 @@ impl crate::database::Database for Sqlite3 {
 
         use crate::schema::videos::dsl;
 
+        // TODO: if we don't have two videos yet, this crashes
         Ok(dsl::videos
             .filter(dsl::id.ne(id))
             .limit(1)

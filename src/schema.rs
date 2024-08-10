@@ -7,6 +7,8 @@ diesel::table! {
         args -> Text,
         created_at -> Timestamp,
         locked_at -> Nullable<Timestamp>,
+        attempts -> Integer,
+        errors -> Text,
     }
 }
 

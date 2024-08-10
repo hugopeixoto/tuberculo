@@ -19,16 +19,14 @@ pub fn download(db: &crate::DatabaseState, video_path: &str) -> Result<(), anyho
     .download()
     .map_err(|e| anyhow::Error::new(e))
     .and_then(|download| {
-        println!("reading {:?}", download.output());
-        let info = std::fs::read_to_string(format!(
-            "{}/{}.info.json",
-            video_path,
-            download.output().trim()
-        ))?;
-        let metadata = crate::database::Video::from_json(&info)?;
+        for id in download.output().lines() {
+            println!("reading {:?}", id);
+            let info = std::fs::read_to_string(format!("{}/{}.info.json", video_path, id,))?;
+            let metadata = crate::database::Video::from_json(&info)?;
 
-        let mut connection = db.write().unwrap();
-        connection.store_metadata(&metadata)?;
+            let mut connection = db.write().unwrap();
+            connection.store_metadata(&metadata)?;
+        }
         Ok(())
     });
 
@@ -38,7 +36,7 @@ pub fn download(db: &crate::DatabaseState, video_path: &str) -> Result<(), anyho
         }
         Err(e) => {
             println!("Failed to download video: {:?}", e);
-            db.write().unwrap().fail(id);
+            db.write().unwrap().fail(id, e);
         }
     }
 

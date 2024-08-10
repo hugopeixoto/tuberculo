@@ -1,2 +1,15 @@
-{% extends "application.html" %} {% block body %} {% include
-"watch.fragment.html" %} {% endblock %}
+{% extends "application.html" %}
+{% block body %}
+{% include "watch.fragment.html" %}
+<script>
+    console.log("page loaded");
+    document.body.addEventListener("htmx:beforeSwap", function (ev) {
+        let video = ev.target.querySelector("video");
+        video.pause();
+        video.querySelectorAll("source").forEach((source) => {
+            source.remove();
+        });
+        video.load();
+    });
+</script>
+{% endblock %}

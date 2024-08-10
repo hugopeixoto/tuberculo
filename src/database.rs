@@ -64,7 +64,7 @@ pub trait Database {
     fn queue_size(&self) -> usize;
     fn pop_queue(&mut self) -> Result<Job, anyhow::Error>;
     fn done(&mut self, id: i32);
-    fn fail(&mut self, id: i32);
+    fn fail(&mut self, id: i32, err: &anyhow::Error);
     fn store_metadata(&mut self, _metadata: &Video) -> Result<(), anyhow::Error>;
     fn get(&self, id: &String) -> Result<Video, anyhow::Error>;
     fn shuffle(&self, id: &String) -> Result<Video, anyhow::Error>;
