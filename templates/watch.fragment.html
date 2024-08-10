@@ -1,0 +1,16 @@
+<div class="watch">
+    <video
+        controls
+        width="640"
+        hx-get="/watch/{{ next_video.id }}"
+        hx-trigger="ended, click from:next .play-next"
+        hx-swap="outerHTML"
+        hx-target="closest .watch"
+        {% if autoplay %}autoplay{% endif %}
+    >
+        <source src="/assets/videos/{{ video.id }}.mp4" />
+        <source src="/assets/videos/{{ video.id }}.webm" />
+    </video>
+    <button class="play-next">next</button>
+    <h1>{{ video.title }}</h1>
+</div>

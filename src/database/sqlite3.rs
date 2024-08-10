@@ -5,6 +5,10 @@ use crate::database::Video;
 
 pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("migrations");
 
+diesel::define_sql_function! {
+    fn random() -> BigInt;
+}
+
 #[derive(diesel::Queryable, diesel::Selectable)]
 #[diesel(table_name = crate::schema::queue)]
 #[diesel(check_for_backend(diesel::sqlite::Sqlite))]
@@ -71,8 +75,11 @@ impl crate::database::Database for Sqlite3 {
     fn queue_size(&self) -> usize {
         let mut connection = self.connection.get().unwrap();
 
-        let x: i64 = crate::schema::queue::dsl::queue
+        use crate::schema::queue::dsl;
+
+        let x: i64 = dsl::queue
             .count()
+            .filter(dsl::locked_at.is_null())
             .first(&mut connection)
             .unwrap();
 
@@ -139,5 +146,30 @@ impl crate::database::Database for Sqlite3 {
             .values(metadata)
             .execute(&mut connection)?;
         Ok(())
+    }
+
+    fn get(&self, id: &String) -> Result<Video, anyhow::Error> {
+        let mut connection = self.connection.get().unwrap();
+
+        use crate::schema::videos::dsl;
+
+        Ok(dsl::videos
+            .filter(dsl::id.eq(id))
+            .limit(1)
+            .select(Video::as_select())
+            .get_result(&mut connection)?)
+    }
+
+    fn shuffle(&self, id: &String) -> Result<Video, anyhow::Error> {
+        let mut connection = self.connection.get().unwrap();
+
+        use crate::schema::videos::dsl;
+
+        Ok(dsl::videos
+            .filter(dsl::id.ne(id))
+            .limit(1)
+            .order(random())
+            .select(Video::as_select())
+            .get_result(&mut connection)?)
     }
 }

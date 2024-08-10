@@ -1,8 +1,14 @@
 <ul>
     {% for video in videos %}
     <li>
-        <img src="/assets/videos/{{ video.id }}.webp" />
-        {{ video.title }}
+        <a href="/watch/{{ video.id }}">
+            <img
+                src="/assets/videos/{{ video.id }}.{{ video.thumbnail_extension }}"
+                alt=""
+            />
+            {{ video.title }}
+            <span class="youtube_id">{{ video.id }}</span>
+        </a>
     </li>
     {% endfor %}
 </ul>

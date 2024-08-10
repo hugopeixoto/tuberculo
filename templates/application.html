@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+    <head>
+        <script
+            src="https://unpkg.com/htmx.org@2.0.1"
+            integrity="sha384-QWGpdj554B4ETpJJC9z+ZHJcA/i59TyjxEPXiiUgN2WmTyV5OEZWCD6gQhgkdpB/"
+            crossorigin="anonymous"
+        ></script>
+        <style>
+            body {
+                font-family: Ubuntu;
+                background-color: wheat;
+            }
+            input[type="text"] {
+                width: 40ch;
+            }
+            #results ul {
+                list-style-type: none;
+                margin: 0;
+                padding: 1rem;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 2rem;
+            }
+            #results ul li {
+                align-content: stretch;
+                display: flex;
+                box-shadow: 2px 2px 5px orange;
+            }
+            #results ul li:hover {
+                box-shadow: 2px 2px 5px white;
+            }
+            #results ul li a {
+                display: grid;
+                align-content: start;
+                gap: 0.5rem;
+                max-width: 30ch;
+                background-color: white;
+                padding: 1rem;
+            }
+            #results ul li .youtube_id {
+                font-family: monospace;
+                font-size: 0.8em;
+            }
+            #results ul li img {
+                width: 100%;
+            }
+
+            .watch {
+                margin: 0px auto;
+                max-width: 100ch;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h2><a href="/">Tuberculo</a></h2>
+        </header>
+
+        <main>{% block body %}{% endblock %}</main>
+        <footer></footer>
+    </body>
+</html>

@@ -7,6 +7,7 @@ CREATE TABLE videos(
     aspect_ratio REAL NOT NULL,
     fulltitle TEXT,
     categories TEXT,
+    thumbnail_extension TEXT NOT NULL,
     full_metadata TEXT NOT NULL,
 
     fetched_at TIMESTAMP NOT NULL

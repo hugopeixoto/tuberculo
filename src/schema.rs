@@ -19,6 +19,7 @@ diesel::table! {
         aspect_ratio -> Float,
         fulltitle -> Nullable<Text>,
         categories -> Nullable<Text>,
+        thumbnail_extension -> Text,
         full_metadata -> Text,
         fetched_at -> Timestamp,
     }
