@@ -67,7 +67,7 @@ pub trait Database {
     fn fail(&mut self, id: i32, err: &anyhow::Error);
     fn store_metadata(&mut self, _metadata: &Video) -> Result<(), anyhow::Error>;
     fn get(&self, id: &String) -> Result<Video, anyhow::Error>;
-    fn shuffle(&self, id: &String) -> Result<Video, anyhow::Error>;
+    fn next(&self, video: &Video) -> Result<Video, anyhow::Error>;
 }
 
 #[derive(serde::Deserialize, Debug, Clone)]

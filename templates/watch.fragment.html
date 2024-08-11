@@ -2,16 +2,20 @@
     <video
         controls
         width="640"
-        hx-get="/watch/{{ next_video.id }}"
+        {% if next_video.is_some() %}
+        hx-get="/watch/{{ next_video.as_ref().unwrap().id }}"
         hx-trigger="ended, click from:next .play-next"
         hx-push-url="true"
         hx-swap="outerHTML"
         hx-target="closest .watch"
+        {% endif %}
         {% if autoplay %}autoplay{% endif %}
     >
         <source src="/assets/videos/{{ video.id }}.mp4" />
         <source src="/assets/videos/{{ video.id }}.webm" />
     </video>
+    {% if next_video.is_some() %}
     <button class="play-next">next</button>
+    {% endif %}
     <h1>{{ video.title }}</h1>
 </div>

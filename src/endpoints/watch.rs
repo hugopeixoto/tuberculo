@@ -9,7 +9,7 @@ use axum::http::HeaderMap;
 #[template(path = "watch.fragment.html")]
 pub struct TemplateFragment {
     video: crate::database::Video,
-    next_video: crate::database::Video,
+    next_video: Option<crate::database::Video>,
     autoplay: bool,
 }
 
@@ -17,7 +17,7 @@ pub struct TemplateFragment {
 #[template(path = "watch.html")]
 pub struct Template {
     video: crate::database::Video,
-    next_video: crate::database::Video,
+    next_video: Option<crate::database::Video>,
     autoplay: bool,
 }
 
@@ -35,11 +35,14 @@ pub async fn handler(
         .unwrap_or("false")
         == "true";
 
+    let video = db.get(&id).unwrap();
+    let next_video = db.next(&video).ok();
+
     if htmx {
         axum::response::Html(
             askama_axum::Template::render(&TemplateFragment {
-                video: db.get(&id).unwrap(),
-                next_video: db.shuffle(&id).unwrap(),
+                video,
+                next_video,
                 autoplay: true,
             })
             .unwrap(),
@@ -47,8 +50,8 @@ pub async fn handler(
     } else {
         axum::response::Html(
             askama_axum::Template::render(&Template {
-                video: db.get(&id).unwrap(),
-                next_video: db.shuffle(&id).unwrap(),
+                video,
+                next_video,
                 autoplay: false,
             })
             .unwrap(),

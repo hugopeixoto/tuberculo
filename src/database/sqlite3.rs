@@ -165,14 +165,13 @@ impl crate::database::Database for Sqlite3 {
             .get_result(&mut connection)?)
     }
 
-    fn shuffle(&self, id: &String) -> Result<Video, anyhow::Error> {
+    fn next(&self, video: &Video) -> Result<Video, anyhow::Error> {
         let mut connection = self.connection.get().unwrap();
 
         use crate::schema::videos::dsl;
 
-        // TODO: if we don't have two videos yet, this crashes
         Ok(dsl::videos
-            .filter(dsl::id.ne(id))
+            .filter(dsl::id.ne(&video.id).and(dsl::categories.eq(&video.categories)))
             .limit(1)
             .order(random())
             .select(Video::as_select())
