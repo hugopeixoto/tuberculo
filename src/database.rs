@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 Hugo Peixoto <hugo.peixoto@gmail.com>
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 pub mod sqlite3;
 
 pub use sqlite3::Sqlite3;

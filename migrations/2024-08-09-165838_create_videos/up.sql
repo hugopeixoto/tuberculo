@@ -1,3 +1,7 @@
+-- SPDX-FileCopyrightText: 2024 Hugo Peixoto <hugo.peixoto@gmail.com>
+--
+-- SPDX-License-Identifier: AGPL-3.0-only
+
 -- Your SQL goes here
 CREATE TABLE videos(
     id TEXT PRIMARY KEY NOT NULL,

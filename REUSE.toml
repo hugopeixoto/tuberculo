@@ -1,0 +1,17 @@
+# SPDX-FileCopyrightText: 2024 Hugo Peixoto <hugo.peixoto@gmail.com>
+#
+# SPDX-License-Identifier: AGPL-3.0-only
+# SPDX-License-Identifier: CC0-1.0
+
+version = 1
+
+[[annotations]]
+path = "templates/*.html"
+SPDX-FileCopyrightText = "2024 Hugo Peixoto <hugo.peixoto@gmail.com>"
+SPDX-License-Identifier = "AGPL-3.0-only"
+
+[[annotations]]
+path = ["Cargo.lock", "src/schema.rs"]
+SPDX-FileCopyrightText = "NONE"
+SPDX-License-Identifier = "CC0-1.0"
+

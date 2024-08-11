@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 Hugo Peixoto <hugo.peixoto@gmail.com>
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 use diesel::prelude::*;
 use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 
