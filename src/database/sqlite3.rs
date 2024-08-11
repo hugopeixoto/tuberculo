@@ -5,9 +5,8 @@ use crate::database::Video;
 
 pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("migrations");
 
-diesel::define_sql_function! {
-    fn random() -> BigInt;
-}
+diesel::define_sql_function! { fn random() -> BigInt; }
+diesel::define_sql_function! { fn lower(text: diesel::sql_types::Text) -> Text; }
 
 #[derive(diesel::Queryable, diesel::Selectable)]
 #[diesel(table_name = crate::schema::queue)]
@@ -45,22 +44,23 @@ impl Sqlite3 {
 }
 
 impl crate::database::Database for Sqlite3 {
-    fn search(&self, _term: &str) -> Vec<crate::database::Video> {
+    fn search(&self, term: &str) -> Vec<crate::database::Video> {
         let mut connection = self.connection.get().unwrap();
 
         use crate::schema::videos::dsl;
 
         dsl::videos
-            .limit(100)
+            .limit(2520)
+            .filter(lower(dsl::title).like(format!("%{}%", term.to_lowercase())))
             .select(Video::as_select())
             .get_results(&mut connection)
             .unwrap()
     }
 
     fn enqueue(&mut self, url: String) {
-        use crate::schema::queue::dsl;
-
         let mut connection = self.connection.get().unwrap();
+
+        use crate::schema::queue::dsl;
 
         diesel::insert_into(dsl::queue)
             .values((
@@ -171,7 +171,11 @@ impl crate::database::Database for Sqlite3 {
         use crate::schema::videos::dsl;
 
         Ok(dsl::videos
-            .filter(dsl::id.ne(&video.id).and(dsl::categories.eq(&video.categories)))
+            .filter(
+                dsl::id
+                    .ne(&video.id)
+                    .and(dsl::categories.eq(&video.categories)),
+            )
             .limit(1)
             .order(random())
             .select(Video::as_select())

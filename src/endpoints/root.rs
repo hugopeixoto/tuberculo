@@ -11,7 +11,7 @@ pub struct Template {
 pub async fn handler(db: axum::extract::State<DatabaseState>) -> Template {
     let db = db.write().unwrap();
     Template {
-        videos: db.search("hello"),
+        videos: db.search(""),
         queue_size: db.queue_size(),
     }
 }
