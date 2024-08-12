@@ -13,3 +13,8 @@ SPDX-License-Identifier = "AGPL-3.0-only"
 path = ["Cargo.lock", "src/schema.rs", "README.md"]
 SPDX-FileCopyrightText = "NONE"
 SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = "assets/htmx.org@2.0.1"
+SPDX-License-Identifier = "LicenseRef-0BSD"
+SPDX-FileCopyrightText = "2020 Big Sky Software"

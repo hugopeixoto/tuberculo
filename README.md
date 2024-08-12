@@ -11,8 +11,8 @@
 
 I wanted a tool to archive the videos in my youtube history, because some of
 them tend to be taken down. I found [tuberarchivist](https://www.tubearchivist.com/),
-but when I noticed it required both ElasticSearch and Redis, I decided to make a
-lightweight version using SQLite3.
+but when I noticed it required both ElasticSearch and Redis, I decided to make
+a lightweight version using SQLite3.
 
 
 ## Install
@@ -33,3 +33,5 @@ Feel free to open any issues with questions or bugs you find on the forge this i
 ## License
 
 [AGPL-3.0-only](./LICENSES/AGPL-3.0-only) © Hugo Peixoto
+
+This repository includes a copy of `htmx` 2.0.1, made available under a Zero-Clause BSD licensed.
