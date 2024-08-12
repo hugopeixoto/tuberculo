@@ -12,4 +12,5 @@ FROM alpine:latest
 RUN apk add yt-dlp
 COPY --from=builder /usr/local/cargo/bin/tuberculo /usr/local/bin/tuberculo
 WORKDIR /app/
+COPY assets /app/assets
 CMD ["tuberculo"]
