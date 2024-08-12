@@ -7,6 +7,8 @@
  Minimal Youtube archival tool. Inspired by tubearchivist.
 
 
+![Screenshot showing tuberculo search page](./assets/screenshot.png)
+
 ## Background
 
 I wanted a tool to archive the videos in my youtube history, because some of
