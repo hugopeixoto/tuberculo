@@ -2,7 +2,7 @@
 
 [![REUSE status](https://api.reuse.software/badge/github.com/hugopeixoto/tuberculo)](https://api.reuse.software/info/github.com/hugopeixoto/tuberculo)
 
-![Tuberculo](./tuberculo.svg)
+![Tuberculo](./assets/tuberculo.svg)
 
  Minimal Youtube archival tool. Inspired by tubearchivist.
 

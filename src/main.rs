@@ -43,6 +43,7 @@ async fn main() -> Result<(), anyhow::Error> {
             "/assets/videos",
             tower_http::services::ServeDir::new(video_path),
         )
+        .nest_service("/assets", tower_http::services::ServeDir::new("assets"))
         .with_state(shared_state);
 
     let listener = tokio::net::TcpListener::bind(bind_address).await?;

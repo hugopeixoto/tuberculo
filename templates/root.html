@@ -1,8 +1,4 @@
 {% extends "application.html" %} {% block body %}
-<p>
-    {{ stats.videos }} videos available; {{ stats.queued_items }} queued; {{
-    stats.dlq }} failed. <a href="/enqueue">Add more videos</a>
-</p>
 
 <form hx-get="/results" hx-target="#results" hx-swap="innerHTML">
     <label>

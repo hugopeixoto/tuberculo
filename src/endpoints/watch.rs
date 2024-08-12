@@ -20,6 +20,7 @@ pub struct TemplateFragment {
 #[derive(askama_axum::Template)]
 #[template(path = "watch.html")]
 pub struct Template {
+    stats: crate::database::Stats,
     video: crate::database::Video,
     next_video: Option<crate::database::Video>,
     autoplay: bool,
@@ -41,6 +42,7 @@ pub async fn handler(
 
     let video = db.get(&id).unwrap();
     let next_video = db.next(&video).ok();
+    let stats = db.stats();
 
     if htmx {
         axum::response::Html(
@@ -54,6 +56,7 @@ pub async fn handler(
     } else {
         axum::response::Html(
             askama_axum::Template::render(&Template {
+                stats,
                 video,
                 next_video,
                 autoplay: false,

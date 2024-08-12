@@ -57,14 +57,47 @@
                 margin: 0px auto;
                 max-width: 100ch;
             }
+
+            header h2 img {
+                max-height: 4em;
+                margin: 0 auto;
+                display: block;
+            }
+            header p {
+                text-align: center;
+            }
+            footer {
+                border-top: 1px solid black;
+                max-width: 80ch;
+                padding-top: 1rem;
+                margin: 1em auto;
+            }
         </style>
     </head>
     <body>
         <header>
-            <h2><a href="/">Tuberculo</a></h2>
+            <h2>
+                <a href="/"
+                    ><img src="/assets/tuberculo.svg" alt="Tuberculo"
+                /></a>
+            </h2>
+
+            <p>
+                {{ stats.videos }} videos available; {{ stats.queued_items }}
+                queued; {{ stats.dlq }} failed.
+                <a href="/enqueue">Add more videos</a>
+            </p>
         </header>
 
         <main>{% block body %}{% endblock %}</main>
-        <footer></footer>
+        <footer>
+            <div>
+                <a href="https://github.com/hugopeixoto/tuberculo">tuberculo</a>
+                – Minimal Youtube archival tool. It's
+                <a href="https://fsfe.org/freesoftware/index.en.html"
+                    >Free Software</a
+                >.
+            </div>
+        </footer>
     </body>
 </html>

@@ -1,9 +1,4 @@
 {% extends "application.html" %} {% block body %}
-<p>
-    {{ stats.videos }} videos available; {{ stats.queued_items }} queued; {{
-    stats.dlq }} failed. <a href="/enqueue">Add more videos</a>
-</p>
-
 <h2>Enqueue video</h2>
 <form action="/enqueue" method="post">
     <label>
