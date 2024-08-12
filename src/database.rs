@@ -30,7 +30,6 @@ impl Video {
     pub fn from_json(metadata: &str) -> anyhow::Result<Self> {
         let json: VideoJSON = serde_json::from_str(metadata)?;
 
-        println!("metadata: {:?}", json);
         Ok(Self {
             id: json.id.clone(),
             title: json.title,

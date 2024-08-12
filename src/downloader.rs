@@ -7,7 +7,7 @@ use crate::database::Database;
 pub fn download(db: &crate::DatabaseState, video_path: &str) -> Result<(), anyhow::Error> {
     let crate::database::Job::Download(id, url) = { db.write().unwrap().pop_queue() }?;
 
-    let x = ytd_rs::YoutubeDL::new(
+    let download_result = ytd_rs::YoutubeDL::new(
         &std::path::PathBuf::from(video_path),
         vec![
             ytd_rs::Arg::new("--write-info-json"),
@@ -24,7 +24,6 @@ pub fn download(db: &crate::DatabaseState, video_path: &str) -> Result<(), anyho
     .map_err(|e| anyhow::Error::new(e))
     .and_then(|download| {
         for id in download.output().lines() {
-            println!("reading {:?}", id);
             let info = std::fs::read_to_string(format!("{}/{}.info.json", video_path, id,))?;
             let metadata = crate::database::Video::from_json(&info)?;
 
@@ -34,15 +33,14 @@ pub fn download(db: &crate::DatabaseState, video_path: &str) -> Result<(), anyho
         Ok(())
     });
 
-    match &x {
+    match &download_result {
         Ok(()) => {
             db.write().unwrap().done(id);
         }
         Err(e) => {
-            println!("Failed to download video: {:?}", e);
             db.write().unwrap().fail(id, e);
         }
     }
 
-    x
+    download_result
 }

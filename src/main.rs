@@ -14,7 +14,7 @@ type DatabaseState = std::sync::Arc<std::sync::RwLock<database::Sqlite3>>;
 
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
-    // options
+    // TODO: extract to cli options or env variables or both
     let db_path = "db/test.sqlite3";
     let bind_address = "0.0.0.0:3000";
     let video_path = "videos/";
@@ -26,7 +26,7 @@ async fn main() -> Result<(), anyhow::Error> {
         match downloader::download(&db, video_path) {
             Ok(_) => {}
             Err(e) => {
-                println!("Error downloading file: {}", e);
+                eprintln!("Error downloading file: {}", e);
             }
         }
         std::thread::sleep(std::time::Duration::from_millis(10_000));
