@@ -1,5 +1,8 @@
 {% extends "application.html" %} {% block body %}
-<p>tudo fixe? temos {{ queue_size }} videos na fila</p>
+<p>
+    {{ stats.videos }} videos available; {{ stats.queued_items }} queued; {{
+    stats.dlq }} failed. <a href="/enqueue">Add more videos</a>
+</p>
 
 <form hx-get="/results" hx-target="#results" hx-swap="innerHTML">
     <label>
@@ -13,14 +16,4 @@
 </form>
 
 <div id="results">{% include "results.html" %}</div>
-
-<h2>Enqueue video</h2>
-<form action="/enqueue" method="post">
-    <label>
-        Video URL:
-        <input name="url" type="text" placeholder="https://youtube.com/poop" />
-    </label>
-
-    <input type="submit" value="Enqueue" />
-</form>
 {% endblock %}

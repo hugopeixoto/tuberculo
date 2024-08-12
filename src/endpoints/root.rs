@@ -9,13 +9,13 @@ use crate::DatabaseState;
 #[template(path = "root.html")]
 pub struct Template {
     videos: Vec<crate::database::Video>,
-    queue_size: usize,
+    stats: crate::database::Stats,
 }
 
 pub async fn handler(db: axum::extract::State<DatabaseState>) -> Template {
     let db = db.write().unwrap();
     Template {
         videos: db.search(""),
-        queue_size: db.queue_size(),
+        stats: db.stats(),
     }
 }

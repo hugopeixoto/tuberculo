@@ -10,6 +10,7 @@ use crate::database::Video;
 pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("migrations");
 
 diesel::define_sql_function! { fn random() -> BigInt; }
+diesel::define_sql_function! { fn datetime(date: diesel::sql_types::Text, modifiers: diesel::sql_types::Text) -> Timestamp; }
 diesel::define_sql_function! { fn lower(text: diesel::sql_types::Text) -> Text; }
 
 #[derive(diesel::Queryable, diesel::Selectable)]
@@ -61,7 +62,7 @@ impl crate::database::Database for Sqlite3 {
             .unwrap()
     }
 
-    fn enqueue(&mut self, url: String) {
+    fn enqueue(&mut self, url: &str) {
         let mut connection = self.connection.get().unwrap();
 
         use crate::schema::queue::dsl;
@@ -77,18 +78,37 @@ impl crate::database::Database for Sqlite3 {
             .unwrap();
     }
 
-    fn queue_size(&self) -> usize {
+    fn stats(&self) -> crate::database::Stats {
         let mut connection = self.connection.get().unwrap();
 
         use crate::schema::queue::dsl;
 
-        let x: i64 = dsl::queue
+        let queued_items: i64 = dsl::queue
             .count()
             .filter(dsl::locked_at.is_null())
             .first(&mut connection)
             .unwrap();
 
-        x as usize
+        let dlq: i64 = dsl::queue
+            .count()
+            .filter(
+                dsl::attempts
+                    .ge(3)
+                    .or(dsl::locked_at.lt(datetime("now", "-30 minutes").nullable())),
+            )
+            .first(&mut connection)
+            .unwrap();
+
+        let videos: i64 = crate::schema::videos::dsl::videos
+            .count()
+            .first(&mut connection)
+            .unwrap();
+
+        crate::database::Stats {
+            dlq: dlq as usize,
+            queued_items: queued_items as usize,
+            videos: videos as usize,
+        }
     }
 
     fn pop_queue(&mut self) -> Result<crate::database::Job, anyhow::Error> {
@@ -157,7 +177,7 @@ impl crate::database::Database for Sqlite3 {
         Ok(())
     }
 
-    fn get(&self, id: &String) -> Result<Video, anyhow::Error> {
+    fn get(&self, id: &str) -> Result<Video, anyhow::Error> {
         let mut connection = self.connection.get().unwrap();
 
         use crate::schema::videos::dsl;

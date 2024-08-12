@@ -36,7 +36,8 @@ async fn main() -> Result<(), anyhow::Error> {
     let app = Router::new()
         .route("/", get(endpoints::root::handler))
         .route("/results", get(endpoints::results::handler))
-        .route("/enqueue", post(endpoints::enqueue::handler))
+        .route("/enqueue", post(endpoints::enqueue::post))
+        .route("/enqueue", get(endpoints::enqueue::get))
         .route("/watch/:id", get(endpoints::watch::handler))
         .nest_service(
             "/assets/videos",

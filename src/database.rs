@@ -62,15 +62,22 @@ pub enum Job {
     Download(i32, String),
 }
 
+#[derive(Clone, Debug)]
+pub struct Stats {
+    pub queued_items: usize,
+    pub videos: usize,
+    pub dlq: usize,
+}
+
 pub trait Database {
     fn search(&self, term: &str) -> Vec<Video>;
-    fn enqueue(&mut self, url: String);
-    fn queue_size(&self) -> usize;
+    fn enqueue(&mut self, url: &str);
+    fn stats(&self) -> Stats;
     fn pop_queue(&mut self) -> Result<Job, anyhow::Error>;
     fn done(&mut self, id: i32);
     fn fail(&mut self, id: i32, err: &anyhow::Error);
     fn store_metadata(&mut self, _metadata: &Video) -> Result<(), anyhow::Error>;
-    fn get(&self, id: &String) -> Result<Video, anyhow::Error>;
+    fn get(&self, id: &str) -> Result<Video, anyhow::Error>;
     fn next(&self, video: &Video) -> Result<Video, anyhow::Error>;
 }
 
