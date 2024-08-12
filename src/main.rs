@@ -47,7 +47,29 @@ async fn main() -> Result<(), anyhow::Error> {
         .with_state(shared_state);
 
     let listener = tokio::net::TcpListener::bind(bind_address).await?;
-    axum::serve(listener, app).await?;
+    axum::serve(listener, app).with_graceful_shutdown(shutdown()).await?;
 
     Ok(())
+}
+
+async fn shutdown() {
+    let ctrl_c = async {
+        tokio::signal::ctrl_c().await.unwrap();
+    };
+
+    #[cfg(unix)]
+    let terminate = async {
+        tokio::signal::unix::signal(tokio::signal::unix::SignalKind::terminate())
+            .unwrap()
+            .recv()
+            .await;
+    };
+
+    #[cfg(not(unix))]
+    let terminate = std::future::pending::<()>();
+
+    tokio::select! {
+        _ = ctrl_c => { eprintln!("ctrl-c signal received"); },
+        _ = terminate => { eprintln!("terminate signal received"); },
+    }
 }
