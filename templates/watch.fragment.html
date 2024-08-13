@@ -1,4 +1,5 @@
 <div class="watch">
+    <h1>{{ video.title }}</h1>
     <video
         controls
         width="640"
@@ -17,5 +18,4 @@
     {% if next_video.is_some() %}
     <button class="play-next">next</button>
     {% endif %}
-    <h1>{{ video.title }}</h1>
 </div>

@@ -52,10 +52,20 @@
             .watch {
                 margin: 0px auto;
                 max-width: 100ch;
+                display: grid;
+                justify-content: center;
+                gap: 1rem;
+            }
+            .watch video {
+                width: 100%;
+            }
+            .watch button {
+                height: 2em;
             }
 
             header h2 img {
                 max-height: 4em;
+                max-width: 100%;
                 margin: 0 auto;
                 display: block;
             }
@@ -67,6 +77,12 @@
                 max-width: 80ch;
                 padding-top: 1rem;
                 margin: 1em auto;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5em;
+            }
+            h1 {
+                text-align: center;
             }
         </style>
     </head>
@@ -87,13 +103,15 @@
 
         <main>{% block body %}{% endblock %}</main>
         <footer>
-            <div>
+            <span>
                 <a href="https://github.com/hugopeixoto/tuberculo">tuberculo</a>
-                – Minimal Youtube archival tool. It's
+                – Minimal Youtube archival tool.</span
+            ><span>
+                It's
                 <a href="https://fsfe.org/freesoftware/index.en.html"
                     >Free Software</a
-                >.
-            </div>
+                >.</span
+            >
         </footer>
     </body>
 </html>
